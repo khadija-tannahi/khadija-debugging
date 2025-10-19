@@ -3,14 +3,20 @@
 
  // the 8 bugs are fixed in this file are: 
  
-  //Bug #1: Wrong message displayed. fixed line 79: tooHighMessage.style.display = ''; 
-  //Bug #2: Max attempts condition not working because (==== should be ===). fixed line 94: if (attempts === maxNumberOfAttempts) {  
+  //Bug #1: Wrong message displayed. fixed line : tooHighMessage.style.display = ''; 
+  //Bug #2: Max attempts condition not working because (==== should be ===). fixed line : if (attempts === maxNumberOfAttempts) {  
   //Bug #3: Max attempts message not shown. fixed lines 100: added line to show  maxGuessesMessage 
-  //Bug #4: Typo in for loop condition (<= should be <). fixed line 124: for (let elementIndex = 0; elementIndex < messages.length; elementIndex++) {
-  //Bug #5: Typo in function declaration (funtion should be function). fixed line 135: function setup() {
-  //Bug #6: attempts not reset at game start (maxNumberOfAttempts should be attempts). fixed line 144: attempts = 0;
-  //Bug #7: Typo in property name (disabeld should be disabled). fixed line 148: submitButton.disabled = false;
-  //Bug #8: Missing lines to show and set innerHTML of maxGuessesMessage when max attempts reached. fixed line 104: added line to show and set innerHTML of maxGuessesMessage
+  //Bug #4: Typo in for loop condition (<= should be <). fixed line : for (let elementIndex = 0; elementIndex < messages.length; elementIndex++) {
+  //Bug #5: Typo in function declaration (funtion should be function). fixed line : function setup() {
+  //Bug #6: attempts not reset at game start (maxNumberOfAttempts should be attempts). fixed line : attempts = 0;
+  //Bug #7: Typo in property name (disabeld should be disabled). fixed line : submitButton.disabled = false;
+  //Bug #8: Missing lines to show and set innerHTML of maxGuessesMessage when max attempts reached. fixed line : added line to show and set innerHTML of maxGuessesMessage 
+
+  
+ // STRETCH GOALS ADDED:
+ // Stretch Goal #1: Prevent numbers below 1 - Added validation in checkGuess to reject guesses < 1
+ // Stretch Goal #2: Prevent numbers above 99 - Added validation in checkGuess to reject guesses > 99
+ // Stretch Goal #3: Singular "guess" vs plural "guesses" - Modified the remaining guesses message to use singular when only 1 left
 
 
 
@@ -48,6 +54,23 @@ function getRandomNumber(min, max) {
 function checkGuess() {
   // Get value from guess input element
   const guess = parseInt(guessInput.value, 10);
+
+  // Stretch Goal #1 & #2: Prevent submitting guessed numbers lower than 1 or higher than 99
+  // Added validation to check if the guess is within the valid range (1-99) before proceeding.
+  // This prevents invalid inputs from being processed, maintaining game integrity and avoiding unexpected behavior.
+  if (guess < 1 || guess > 99 || isNaN(guess)) {
+    // Show an invalid guess message (assuming a new message element 'invalid-guess' exists in HTML)
+    // If not, this could be adapted to use an existing message or alert.
+    const invalidMessage = document.getElementById('invalid-guess');
+    if (invalidMessage) {
+      invalidMessage.style.display = '';
+      invalidMessage.innerHTML = 'Please enter a number between 1 and 99.';
+    }
+    // Clear the input box
+    guessInput.value = '';
+    return; // Exit early without incrementing attempts or checking further
+  }
+
   attempts = attempts + 1; // Increment number of attempts
 
   // Hide all messages
@@ -81,10 +104,15 @@ function checkGuess() {
 
     // calculate remaining attempts
     const remainingAttempts = maxNumberOfAttempts - attempts;
-    
+
+    // Stretch Goal #3: If there is only one guess left, it should say "guess" (singular) instead of "guesses" (plural)
+    // Modified the message to use singular "guess" when remainingAttempts is 1, otherwise plural "guesses".
+    // This improves user experience by providing grammatically correct feedback.
+    const guessWord = remainingAttempts === 1 ? 'guess' : 'guesses';
+
     // Show the number of guesses message
     numberOfGuessesMessage.style.display = '';
-    numberOfGuessesMessage.innerHTML = `You guessed ${guess}. <br> ${remainingAttempts} guesses remaining`;
+    numberOfGuessesMessage.innerHTML = `You guessed ${guess}. <br> ${remainingAttempts} ${guessWord} remaining`;
   }
 
 
